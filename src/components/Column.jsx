@@ -29,32 +29,38 @@ const TaskList = styled.div`
     min-height: 100px;
 `;
 
-export default function Column({ title, tasks, id }) {
-    return (
-        <Container className="column">
-            <Title
-                style={{
-                    backgroundColor: "lightblue",
-                    position: "sticky",
-                    top: "0",
-                }}
-            >
-                {title}
-            </Title>
-            <Droppable droppableId={id}>
-                {(provided, snapshot) => (
-                    <TaskList
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        isDraggingOver={snapshot.isDraggingOver}
-                    >
-                        {tasks.map((task, index) => (
-                            <Card key={index} index={index} task={task} />
-                        ))}
-                        {provided.placeholder}
-                    </TaskList>
-                )}
-            </Droppable>
-        </Container>
-    );
+export default function Column({ title, tasks, id, onDelete, onEdit }) {
+  return (
+    <Container className="column">
+      <Title
+        style={{
+          backgroundColor: "lightblue",
+          position: "sticky",
+          top: "0",
+        }}
+      >
+        {title}
+      </Title>
+      <Droppable droppableId={id}>
+        {(provided, snapshot) => (
+          <TaskList
+            ref={provided?.innerRef}
+            {...provided.droppableProps}
+            isDraggingOver={snapshot.isDraggingOver}
+          >
+            {tasks?.map((task, index) => (
+              <Card
+                key={index}
+                index={index}
+                task={task}
+                onDelete={onDelete} 
+                onEdit={onEdit}
+              />
+            ))}
+            {provided.placeholder}
+          </TaskList>
+        )}
+      </Droppable>
+    </Container>
+  );
 }

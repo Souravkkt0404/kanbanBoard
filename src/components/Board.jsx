@@ -48,73 +48,83 @@ export default function Board() {
   };
 
   // Helper functions
-function findItemById(id, array) {
-  return array.find((item) => item.id === id);
-}
+  function findItemById(id, array) {
+    return array.find((item) => item.id === Number(id));}
 
-const handleDragEnd = (result) => {
-  const { destination, source, draggableId } = result;
+  const handleDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+   
 
-  if (!destination || source.droppableId === destination.droppableId) return;
+    // If dropping in the same place
+    if (source.droppableId === destination.droppableId) {
+      console.log("Dropped in the same column");
+      return;
+    }
 
-  deletePreviousState(source.droppableId, draggableId);
+    if (!destination || source.droppableId === destination.droppableId) return;
 
-  const task = findItemById(draggableId, [
-    ...incomplete,
-    ...completed,
-    ...inReview,
-    ...backlog,
-  ]);
+    deletePreviousState(source.droppableId, draggableId);
 
-  setNewState(destination.droppableId, task);
-};
+    const task = findItemById(draggableId, [
+      ...incomplete,
+      ...completed,
+      ...inReview,
+      ...backlog,
+    ]);
 
-function deletePreviousState(sourceDroppableId, taskId) {
-  switch (sourceDroppableId) {
-    case "1":
-      setIncomplete(removeItemById(taskId, incomplete));
-      break;
-    case "2":
-      setCompleted(removeItemById(taskId, completed));
-      break;
-    case "3":
-      setInReview(removeItemById(taskId, inReview));
-      break;
-    case "4":
-      setBacklog(removeItemById(taskId, backlog));
-      break;
-    default:
-      break;
+    if (task) {
+      setNewState(destination.droppableId, task);
+    } else {
+      console.log("Task not found with ID:", draggableId); // In case task is undefined
+    }
+  };
+
+  function deletePreviousState(sourceDroppableId, taskId) {
+    switch (sourceDroppableId) {
+      case "1":
+        setIncomplete(removeItemById(taskId, incomplete));
+        break;
+      case "2":
+        setCompleted(removeItemById(taskId, completed));
+        break;
+      case "3":
+        setInReview(removeItemById(taskId, inReview));
+        break;
+      case "4":
+        setBacklog(removeItemById(taskId, backlog));
+        break;
+      default:
+        break;
+    }
   }
-}
 
-function setNewState(destinationDroppableId, task) {
-  let updatedTask = { ...task }; 
-  switch (destinationDroppableId) {
-    case "1": 
-      updatedTask = { ...task, completed: false };
-      setIncomplete((prev) => [...prev, updatedTask]);
-      break;
-    case "2": 
-      updatedTask = { ...task, completed: true };
-      setCompleted((prev) => [...prev, updatedTask]);
-      break;
-    case "3":
-      updatedTask = { ...task, completed: false };
-      setInReview((prev) => [...prev, updatedTask]);
-      break;
-    case "4":
-      updatedTask = { ...task, completed: false };
-      setBacklog((prev) => [...prev, updatedTask]);
-      break;
-    default:
-      break;
+  function setNewState(destinationDroppableId, task) {
+    let updatedTask = { ...task };
+    switch (destinationDroppableId) {
+      case "1":
+        updatedTask = { ...task, completed: false };
+        setIncomplete((prev) => [...prev, updatedTask]);
+        break;
+      case "2":
+        updatedTask = { ...task, completed: true };
+        setCompleted((prev) => [...prev, updatedTask]);
+        break;
+      case "3":
+        updatedTask = { ...task, completed: false };
+        setInReview((prev) => [...prev, updatedTask]);
+        break;
+      case "4":
+        updatedTask = { ...task, completed: false };
+        setBacklog((prev) => [...prev, updatedTask]);
+        break;
+      default:
+        break;
+    }
   }
-}
 
-function removeItemById(id, array) {
-  return array.filter((item) => item.id !== id);
-}
+  function removeItemById(id, array) {
+    return array.filter((item) => item.id !== id);
+  }
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>

@@ -52,39 +52,35 @@ function findItemById(id, array) {
   return array.find((item) => item.id === id);
 }
 
-  const handleDragEnd = (result) => {
-    const { destination, source, draggableId } = result;
+const handleDragEnd = (result) => {
+  const { destination, source, draggableId } = result;
 
-    // If dropped outside or dropped in the same position, do nothing
-    if (!destination || source.droppableId === destination.droppableId) return;
+  if (!destination || source.droppableId === destination.droppableId) return;
 
-    // Find the task being dragged
-    const task = findItemById(draggableId, [
-      ...incomplete,
-      ...completed,
-      ...inReview,
-      ...backlog,
-    ]);
+  deletePreviousState(source.droppableId, draggableId);
 
-    // Delete the task from the source column
-    deletePreviousState(source.droppableId, draggableId);
+  const task = findItemById(draggableId, [
+    ...incomplete,
+    ...completed,
+    ...inReview,
+    ...backlog,
+  ]);
 
-    // Add the task to the destination column
-    setNewState(destination.droppableId, task);
-  };
+  setNewState(destination.droppableId, task);
+};
 
 function deletePreviousState(sourceDroppableId, taskId) {
   switch (sourceDroppableId) {
-    case "1": // TO DO
+    case "1":
       setIncomplete(removeItemById(taskId, incomplete));
       break;
-    case "2": // DONE
+    case "2":
       setCompleted(removeItemById(taskId, completed));
       break;
-    case "3": // IN REVIEW
+    case "3":
       setInReview(removeItemById(taskId, inReview));
       break;
-    case "4": // BACKLOG
+    case "4":
       setBacklog(removeItemById(taskId, backlog));
       break;
     default:
